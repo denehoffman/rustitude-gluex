@@ -1,6 +1,5 @@
 use std::fmt::Display;
 
-use num_complex::Complex64;
 use rayon::prelude::*;
 use rustitude::prelude::*;
 use sphrs::SHEval;

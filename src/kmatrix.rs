@@ -1,7 +1,6 @@
 use std::f64::consts::PI;
 
 use nalgebra::{ComplexField, SMatrix, SVector};
-use num_complex::Complex64;
 use rayon::prelude::*;
 use rustitude::prelude::*;
 

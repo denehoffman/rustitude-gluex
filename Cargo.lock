@@ -1123,8 +1123,6 @@ dependencies = [
 [[package]]
 name = "rustitude"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b2e108ae60280b208ed63c5ef000d4fdd8705231e41f8377379e97f0c0ac707c"
 dependencies = [
  "anyinput",
  "approx",

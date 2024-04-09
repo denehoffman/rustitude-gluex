@@ -1,3 +1,5 @@
+pub mod dalitz;
 pub mod harmonics;
-pub mod kmatrix;
+pub mod resonances;
+pub mod sdmes;
 pub mod utils;

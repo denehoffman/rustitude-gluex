@@ -1,8 +1,75 @@
+use crate::utils::blatt_weisskopf;
+use crate::utils::breakup_momentum;
 use std::f64::consts::PI;
 
-use nalgebra::{ComplexField, SMatrix, SVector};
+use nalgebra::{SMatrix, SVector};
 use rayon::prelude::*;
 use rustitude::prelude::*;
+
+#[derive(Default)]
+pub struct BreitWigner {
+    p1_indices: Vec<usize>,
+    p2_indices: Vec<usize>,
+    l: usize,
+    m: Vec<f64>,
+    m1: Vec<f64>,
+    m2: Vec<f64>,
+    q: Vec<f64>,
+    f: Vec<f64>,
+}
+impl BreitWigner {
+    pub fn new(p1_indices: &[usize], p2_indices: &[usize], l: usize) -> Self {
+        Self {
+            p1_indices: p1_indices.into(),
+            p2_indices: p2_indices.into(),
+            l,
+            ..Default::default()
+        }
+    }
+}
+impl Node for BreitWigner {
+    fn precalculate(&mut self, dataset: &Dataset) {
+        (self.m, (self.m1, (self.m2, (self.q, self.f)))) = dataset
+            .par_iter()
+            .map(|event| {
+                let p1: FourMomentum = self
+                    .p1_indices
+                    .iter()
+                    .map(|i| &event.daughter_p4s[*i])
+                    .sum();
+                let p2: FourMomentum = self
+                    .p2_indices
+                    .iter()
+                    .map(|i| &event.daughter_p4s[*i])
+                    .sum();
+                let m = (p1 + p2).m();
+                let m1 = p1.m();
+                let m2 = p2.m();
+                let q = breakup_momentum(m, m1, m2);
+                let f = blatt_weisskopf(m, m1, m2, self.l);
+                (m, (m1, (m2, (q, f))))
+            })
+            .unzip()
+    }
+
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+        let m = self.m[event.index];
+        let m1 = self.m1[event.index];
+        let m2 = self.m2[event.index];
+        let q = self.q[event.index];
+        let f = self.f[event.index];
+        let m0 = parameters[0];
+        let g0 = parameters[1];
+        let f0 = blatt_weisskopf(m0, m1, m2, self.l);
+        let q0 = breakup_momentum(m0, m1, m2);
+        let g = g0 * (m0 / m) * (q / q0) * (f.powi(2) / f0.powi(2));
+        f * (m0 * g0 / PI) / Complex64::new(m0.powi(2) - m.powi(2), -1.0 * m0 * g)
+    }
+
+    fn parameters(&self) -> Option<Vec<String>> {
+        Some(vec!["mass".to_string(), "width".to_string()])
+    }
+}
 
 #[derive(Clone, Copy)]
 pub struct AdlerZero {
@@ -44,27 +111,10 @@ impl<const C: usize, const R: usize> KMatrixConstants<C, R> {
                     * (self.m2s[i] / self.m1s[i]).ln()
         }))
     }
-    fn z(s: f64, m1: f64, m2: f64) -> Complex64 {
-        Self::rho(s, m1, m2).powi(2) * s / (2.0 * 0.1973 * 0.1973)
+    fn barrier_factor(s: f64, m1: f64, m2: f64, mr: f64, l: usize) -> f64 {
+        blatt_weisskopf(s.sqrt(), m1, m2, l) / blatt_weisskopf(mr, m1, m2, l)
     }
-    fn blatt_weisskopf(s: f64, m1: f64, m2: f64, l: usize) -> Complex64 {
-        let z = Self::z(s, m1, m2);
-        match l {
-            0 => 1.0.into(),
-            1 => ((2.0 * z) / (z + 1.0)).sqrt(),
-            2 => ((13.0 * z.powi(2)) / ((z - 3.0).powi(2) + 9.0 * z)).sqrt(),
-            3 => ((277.0 * z.powi(3)) / (z * (z - 15.0).powi(2) + 9.0 * (2.0 * z - 5.0).powi(2)))
-                .sqrt(),
-            4 => ((12746.0 * z.powi(4)) / (z.powi(2) - 45.0 * z + 105.0).powi(2)
-                + 25.0 * z * (2.0 * z - 21.0).powi(2))
-            .sqrt(),
-            l => panic!("L = {l} is not yet implemented"),
-        }
-    }
-    fn barrier_factor(s: f64, m1: f64, m2: f64, mr: f64, l: usize) -> Complex64 {
-        Self::blatt_weisskopf(s, m1, m2, l) / Self::blatt_weisskopf(mr.powi(2), m1, m2, l)
-    }
-    fn barrier_matrix(&self, s: f64) -> SMatrix<Complex64, C, R> {
+    fn barrier_matrix(&self, s: f64) -> SMatrix<f64, C, R> {
         SMatrix::from_fn(|i, a| {
             Self::barrier_factor(s, self.m1s[i], self.m2s[i], self.mrs[a], self.l)
         })
@@ -75,10 +125,12 @@ impl<const C: usize, const R: usize> KMatrixConstants<C, R> {
         SMatrix::from_fn(|i, j| {
             (0..R)
                 .map(|a| {
-                    bf[(i, a)]
-                        * bf[(j, a)]
-                        * (self.g[(i, a)] * self.g[(j, a)] / (self.mrs[a].powi(2) - s)
-                            + self.c[(i, j)])
+                    Complex64::from(
+                        bf[(i, a)]
+                            * bf[(j, a)]
+                            * (self.g[(i, a)] * self.g[(j, a)] / (self.mrs[a].powi(2) - s)
+                                + self.c[(i, j)]),
+                    )
                 })
                 .sum::<Complex64>()
                 * self.adler_zero.map_or(1.0, |az| (s - az.s_0) / az.s_norm)
@@ -155,7 +207,8 @@ impl Node for KMatrixF0 {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
                 let barrier_mat = self.1.barrier_matrix(s);
                 let pvector_constants = SMatrix::<Complex64, 5, 5>::from_fn(|i, a| {
-                    barrier_mat[(i, a)] * self.1.g[(i, a)] / (self.1.mrs[a].powi(2) - s)
+                    Complex64::from(barrier_mat[(i, a)]) * self.1.g[(i, a)]
+                        / (self.1.mrs[a].powi(2) - s)
                 });
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
@@ -227,7 +280,8 @@ impl Node for KMatrixF2 {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
                 let barrier_mat = self.1.barrier_matrix(s);
                 let pvector_constants = SMatrix::<Complex64, 4, 4>::from_fn(|i, a| {
-                    barrier_mat[(i, a)] * self.1.g[(i, a)] / (self.1.mrs[a].powi(2) - s)
+                    Complex64::from(barrier_mat[(i, a)]) * self.1.g[(i, a)]
+                        / (self.1.mrs[a].powi(2) - s)
                 });
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
@@ -293,7 +347,8 @@ impl Node for KMatrixA0 {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
                 let barrier_mat = self.1.barrier_matrix(s);
                 let pvector_constants = SMatrix::<Complex64, 2, 2>::from_fn(|i, a| {
-                    barrier_mat[(i, a)] * self.1.g[(i, a)] / (self.1.mrs[a].powi(2) - s)
+                    Complex64::from(barrier_mat[(i, a)]) * self.1.g[(i, a)]
+                        / (self.1.mrs[a].powi(2) - s)
                 });
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
@@ -355,7 +410,8 @@ impl Node for KMatrixA2 {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
                 let barrier_mat = self.1.barrier_matrix(s);
                 let pvector_constants = SMatrix::<Complex64, 3, 2>::from_fn(|i, a| {
-                    barrier_mat[(i, a)] * self.1.g[(i, a)] / (self.1.mrs[a].powi(2) - s)
+                    Complex64::from(barrier_mat[(i, a)]) * self.1.g[(i, a)]
+                        / (self.1.mrs[a].powi(2) - s)
                 });
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
@@ -375,6 +431,69 @@ impl Node for KMatrixA2 {
             "a2_1320 im".to_string(),
             "a2_1700 re".to_string(),
             "a2_1700 im".to_string(),
+        ])
+    }
+}
+
+pub struct KMatrixRho(
+    usize,
+    KMatrixConstants<3, 2>,
+    Vec<(SVector<Complex64, 3>, SMatrix<Complex64, 3, 2>)>,
+);
+#[rustfmt::skip]
+impl KMatrixRho {
+    pub fn new(channel: usize) -> Self {
+        Self(channel,
+             KMatrixConstants {
+                g: SMatrix::<f64, 3, 2>::new(
+                    0.28023, 0.16318,
+                    0.01806, 0.53879, 
+                    0.06501, 0.00495,
+                ),
+                c: SMatrix::<f64, 3, 3>::new(
+                    -0.06948, 0.00000,  0.07958,
+                     0.00000, 0.00000,  0.00000,
+                     0.07958, 0.00000, -0.60000,
+                ),
+                m1s: [0.13498, 0.26995, 0.49368],
+                m2s: [0.13498, 0.26995, 0.49761],
+                mrs: [0.71093, 1.58660],
+                adler_zero: None,
+                l: 1,
+            },
+            Vec::default())
+    }
+}
+
+impl Node for KMatrixRho {
+    fn precalculate(&mut self, dataset: &Dataset) {
+        self.2 = dataset
+            .par_iter()
+            .map(|event| {
+                let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
+                let barrier_mat = self.1.barrier_matrix(s);
+                let pvector_constants = SMatrix::<Complex64, 3, 2>::from_fn(|i, a| {
+                    Complex64::from(barrier_mat[(i, a)]) * self.1.g[(i, a)]
+                        / (self.1.mrs[a].powi(2) - s)
+                });
+                (self.1.ikc_inv(s, self.0), pvector_constants)
+            })
+            .collect();
+    }
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+        let betas = SVector::<Complex64, 2>::new(
+            Complex64::new(parameters[0], parameters[1]),
+            Complex64::new(parameters[2], parameters[3]),
+        );
+        let (ikc_inv_vec, pvector_constants_mat) = self.2[event.index];
+        KMatrixConstants::calculate_k_matrix(&betas, &ikc_inv_vec, &pvector_constants_mat)
+    }
+    fn parameters(&self) -> Option<Vec<String>> {
+        Some(vec![
+            "rho_770 re".to_string(),
+            "rho_770 im".to_string(),
+            "rho_1700 re".to_string(),
+            "rho_1700 im".to_string(),
         ])
     }
 }
@@ -415,7 +534,8 @@ impl Node for KMatrixPi1 {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
                 let barrier_mat = self.1.barrier_matrix(s);
                 let pvector_constants = SMatrix::<Complex64, 2, 1>::from_fn(|i, a| {
-                    barrier_mat[(i, a)] * self.1.g[(i, a)] / (self.1.mrs[a].powi(2) - s)
+                    Complex64::from(barrier_mat[(i, a)]) * self.1.g[(i, a)]
+                        / (self.1.mrs[a].powi(2) - s)
                 });
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })

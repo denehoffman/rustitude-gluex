@@ -131,12 +131,11 @@ impl Frame {
     pub fn coordinates(
         &self,
         resonance: &FourMomentum,
-        daughter: &FourMomentum,
+        daughter_res_vec: &Vector3<f64>,
         event: &Event,
     ) -> (Vector3<f64>, Vector3<f64>, Vector3<f64>, Coordinates<f64>) {
         match self {
             Frame::Helicity => {
-                let daughter_vec = daughter.boost_along(resonance).momentum();
                 let z = resonance.momentum().normalize();
                 let y = event
                     .beam_p4
@@ -149,14 +148,13 @@ impl Frame {
                     y,
                     z,
                     Coordinates::cartesian(
-                        daughter_vec.dot(&x),
-                        daughter_vec.dot(&y),
-                        daughter_vec.dot(&z),
+                        daughter_res_vec.dot(&x),
+                        daughter_res_vec.dot(&y),
+                        daughter_res_vec.dot(&z),
                     ),
                 )
             }
             Frame::GottfriedJackson => {
-                let daughter_vec = daughter.boost_along(resonance).momentum();
                 let z = event.beam_p4.boost_along(resonance).momentum().normalize();
                 let y = event
                     .beam_p4
@@ -169,9 +167,9 @@ impl Frame {
                     y,
                     z,
                     Coordinates::cartesian(
-                        daughter_vec.dot(&x),
-                        daughter_vec.dot(&y),
-                        daughter_vec.dot(&z),
+                        daughter_res_vec.dot(&x),
+                        daughter_res_vec.dot(&y),
+                        daughter_res_vec.dot(&z),
                     ),
                 )
             }

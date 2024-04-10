@@ -75,7 +75,7 @@ There are a few amplitudes from [halld_sim](https://github.com/JeffersonLab/hall
 | [TwoLeptonAnglesGJ.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoLeptonAnglesGJ.cc) |  | :heavy_exclamation_mark: |
 | [TwoPSAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPSAngles.cc) | `rustitude-gluex::harmonics::TwoPS` | :white_check_mark: |
 | [TwoPSHelicity.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPSHelicity.cc) | `rustitude-gluex::harmonics::TwoPS` | :white_check_mark: |
-| [TwoPiAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPiAngles.cc) |  | :bangbang: |
+| [TwoPiAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPiAngles.cc) | `rustitude-gluex::sdmes::TwoPiSDME` | :white_check_mark: |
 | [TwoPiAngles_amp.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPiAngles_amp.cc) |  | :heavy_exclamation_mark: |
 | [TwoPiAngles_primakoff.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPiAngles_primakoff.cc) |  | :bangbang: |
 | [TwoPiEtas_tdist.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPiEtas_tdist.cc) |  | :x: |

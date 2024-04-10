@@ -11,13 +11,13 @@
 <p align="center">
   <a href="https://github.com/denehoffman/rustitude-gluex/commits/main/" alt="Lastest Commits">
     <img src="https://img.shields.io/github/last-commit/denehoffman/rustitude-gluex/main" /></a>
-  <a href="https://github.com/denehoffman/rustitude/actions" alt="Build Status">
+  <a href="https://github.com/denehoffman/rustitude-gluex/actions" alt="Build Status">
     <img src="https://img.shields.io/github/actions/workflow/status/denehoffman/rustitude-gluex/rust.yml" /></a>
   <a href="LICENSE" alt="License">
     <img src="https://img.shields.io/github/license/denehoffman/rustitude-gluex" /></a>
   <a href="https://crates.io/crates/rustitude-gluex" alt="Rustitude-GlueX on crates.io">
     <img src="https://img.shields.io/crates/v/rustitude-gluex" /></a>
-  <a href="https://docs.rs/rustitude/latest/rustitude-gluex/" alt="Rustitude-GlueX documentation on docs.rs">
+  <a href="https://docs.rs/rustitude-gluex/latest/rustitude-gluex/" alt="Rustitude-GlueX documentation on docs.rs">
     <img src="https://img.shields.io/docsrs/rustitude-gluex" /></a>
 </p>
 

@@ -68,13 +68,13 @@ There are a few amplitudes from [halld_sim](https://github.com/JeffersonLab/hall
 | [Pi0SAID.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/Pi0SAID.cc) |  | :x: |
 | [PiPlusRegge.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/PiPlusRegge.cc) |  | :x: |
 | [Piecewise.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/Piecewise.cc) |  | :bangbang: |
-| [SinglePS.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/SinglePS.cc) |  | :bangbang: |
+| [SinglePS.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/SinglePS.cc) | `rustitude-gluex::harmonics::OnePS` | :white_check_mark: |
 | [ThreePiAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/ThreePiAngles.cc) |  | :bangbang: |
 | [ThreePiAnglesSchilling.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/ThreePiAnglesSchilling.cc) |  | :bangbang: |
 | [TwoLeptonAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoLeptonAngles.cc) |  | :heavy_exclamation_mark: |
 | [TwoLeptonAnglesGJ.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoLeptonAnglesGJ.cc) |  | :heavy_exclamation_mark: |
-| [TwoPSAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPSAngles.cc) |  | :bangbang: |
-| [TwoPSHelicity.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPSHelicity.cc) |  | :bangbang: |
+| [TwoPSAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPSAngles.cc) | `rustitude-gluex::harmonics::TwoPS` | :white_check_mark: |
+| [TwoPSHelicity.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPSHelicity.cc) | `rustitude-gluex::harmonics::TwoPS` | :white_check_mark: |
 | [TwoPiAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPiAngles.cc) |  | :bangbang: |
 | [TwoPiAngles_amp.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPiAngles_amp.cc) |  | :heavy_exclamation_mark: |
 | [TwoPiAngles_primakoff.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPiAngles_primakoff.cc) |  | :bangbang: |

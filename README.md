@@ -70,7 +70,7 @@ There are a few amplitudes from [halld_sim](https://github.com/JeffersonLab/hall
 | [Piecewise.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/Piecewise.cc) |  | :bangbang: |
 | [SinglePS.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/SinglePS.cc) | `rustitude-gluex::harmonics::OnePS` | :white_check_mark: |
 | [ThreePiAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/ThreePiAngles.cc) |  | :bangbang: |
-| [ThreePiAnglesSchilling.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/ThreePiAnglesSchilling.cc) |  | :bangbang: |
+| [ThreePiAnglesSchilling.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/ThreePiAnglesSchilling.cc) | `rustitude-gluex::sdmes::ThreePiSDME` | :white_check_mark: |
 | [TwoLeptonAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoLeptonAngles.cc) |  | :heavy_exclamation_mark: |
 | [TwoLeptonAnglesGJ.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoLeptonAnglesGJ.cc) |  | :heavy_exclamation_mark: |
 | [TwoPSAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/TwoPSAngles.cc) | `rustitude-gluex::harmonics::TwoPS` | :white_check_mark: |

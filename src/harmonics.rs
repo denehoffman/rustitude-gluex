@@ -1,123 +1,11 @@
 use std::f64::consts::PI;
-use std::fmt::Display;
 
-use nalgebra::Vector3;
 use num_complex::ComplexFloat;
 use rayon::prelude::*;
 use rustitude::prelude::*;
-use sphrs::{ComplexSH, Coordinates, SHEval};
+use sphrs::{ComplexSH, SHEval};
 
-#[derive(Clone, Copy, Debug)]
-pub enum Part {
-    Real,
-    Imag,
-    Both,
-}
-
-#[derive(Clone, Copy, Default)]
-#[rustfmt::skip]
-pub enum Wave {
-    #[default]
-    S,
-    S0,
-    Pn1, P0, P1, P,
-    Dn2, Dn1, D0, D1, D2, D,
-    Fn3, Fn2, Fn1, F0, F1, F2, F3, F,
-}
-
-#[rustfmt::skip]
-impl Wave {
-    pub fn l(&self) -> i64 {
-        match self {
-            Self::S0 | Self::S => 0,
-            Self::Pn1 | Self::P0 | Self::P1 | Self::P => 1,
-            Self::Dn2 | Self::Dn1 | Self::D0 | Self::D1 | Self::D2 | Self::D => 2,
-            Self::Fn3 | Self::Fn2 | Self::Fn1 | Self::F0 | Self::F1 | Self::F2 | Self::F3 | Self::F => 3,
-        }
-    }
-    pub fn m(&self) -> i64 {
-        match self {
-            Self::S | Self::P | Self::D | Self::F => 0,
-            Self::S0 | Self::P0 | Self::D0 | Self::F0 => 0,
-            Self::Pn1 | Self::Dn1 | Self::Fn1 => -1,
-            Self::P1 | Self::D1 | Self::F1 => 1,
-            Self::Dn2 | Self::Fn2 => -2,
-            Self::D2 | Self::F2 => 2,
-            Self::Fn3 => -3,
-            Self::F3 => 3,
-        }
-    }
-}
-
-impl Display for Wave {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let l_string = match self.l() {
-            0 => "S",
-            1 => "P",
-            2 => "D",
-            3 => "F",
-            _ => unimplemented!(),
-        };
-        write!(f, "{} {:+}", l_string, self.m())
-    }
-}
-
-pub enum Frame {
-    Helicity,
-    GottfriedJackson,
-}
-
-impl Frame {
-    pub fn coordinates(
-        &self,
-        resonance: &FourMomentum,
-        daughter: &FourMomentum,
-        event: &Event,
-    ) -> (Vector3<f64>, Vector3<f64>, Vector3<f64>, Coordinates<f64>) {
-        match self {
-            Frame::Helicity => {
-                let daughter_vec = daughter.boost_along(resonance).momentum();
-                let z = resonance.momentum().normalize();
-                let y = event
-                    .beam_p4
-                    .momentum()
-                    .cross(&(resonance.momentum()))
-                    .normalize();
-                let x = y.cross(&z);
-                (
-                    x,
-                    y,
-                    z,
-                    Coordinates::cartesian(
-                        daughter_vec.dot(&x),
-                        daughter_vec.dot(&y),
-                        daughter_vec.dot(&z),
-                    ),
-                )
-            }
-            Frame::GottfriedJackson => {
-                let daughter_vec = daughter.boost_along(resonance).momentum();
-                let z = event.beam_p4.boost_along(resonance).momentum().normalize();
-                let y = event
-                    .beam_p4
-                    .momentum()
-                    .cross(&(resonance.momentum()))
-                    .normalize();
-                let x = y.cross(&z);
-                (
-                    x,
-                    y,
-                    z,
-                    Coordinates::cartesian(
-                        daughter_vec.dot(&x),
-                        daughter_vec.dot(&y),
-                        daughter_vec.dot(&z),
-                    ),
-                )
-            }
-        }
-    }
-}
+use crate::utils::{Frame, Part, Reflectivity, Wave};
 
 pub struct Ylm {
     wave: Wave,
@@ -152,21 +40,6 @@ impl Node for Ylm {
 
     fn calculate(&self, _parameters: &[f64], event: &Event) -> Complex64 {
         self.data[event.index]
-    }
-}
-
-#[derive(Copy, Clone)]
-pub enum Reflectivity {
-    Positive = 1,
-    Negative = -1,
-}
-
-impl Display for Reflectivity {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Reflectivity::Positive => write!(f, "+"),
-            Reflectivity::Negative => write!(f, "-"),
-        }
     }
 }
 

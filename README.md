@@ -17,7 +17,7 @@
     <img src="https://img.shields.io/github/license/denehoffman/rustitude-gluex" /></a>
   <a href="https://crates.io/crates/rustitude-gluex" alt="Rustitude-GlueX on crates.io">
     <img src="https://img.shields.io/crates/v/rustitude-gluex" /></a>
-  <a href="https://docs.rs/rustitude-gluex/latest/rustitude-gluex/" alt="Rustitude-GlueX documentation on docs.rs">
+  <a href="https://docs.rs/rustitude-gluex/latest/rustitude_gluex/" alt="Rustitude-GlueX documentation on docs.rs">
     <img src="https://img.shields.io/docsrs/rustitude-gluex" /></a>
 </p>
 

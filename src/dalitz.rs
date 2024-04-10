@@ -2,7 +2,7 @@ use rayon::prelude::*;
 use rustitude::prelude::*;
 
 #[derive(Default)]
-struct OmegaDalitz {
+pub struct OmegaDalitz {
     dalitz_z: Vec<f64>,
     dalitz_sin3theta: Vec<f64>,
     lambda: Vec<f64>,

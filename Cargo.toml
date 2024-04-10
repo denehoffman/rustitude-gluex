@@ -13,5 +13,5 @@ readme = "README.md"
 nalgebra = "0.32.5"
 num-complex = "0.4.5"
 rayon = "1.10.0"
-rustitude = { path = "../rustitude", version = "0.3.0" }
+rustitude = { path = "../rustitude", version = "0.3.1" }
 sphrs = "0.2.2"

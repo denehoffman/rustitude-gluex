@@ -1,5 +1,5 @@
 use rayon::prelude::*;
-use rustitude::prelude::*;
+use rustitude_core::prelude::*;
 use sphrs::SHCoordinates;
 use std::f64::consts::PI;
 
@@ -22,6 +22,8 @@ impl TwoPiSDME {
 impl Node for TwoPiSDME {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.data = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let resonance = event.daughter_p4s[0] + event.daughter_p4s[1];
@@ -111,6 +113,8 @@ impl ThreePiSDME {
 impl Node for ThreePiSDME {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.data = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let resonance =

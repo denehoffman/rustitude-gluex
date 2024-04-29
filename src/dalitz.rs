@@ -1,5 +1,5 @@
 use rayon::prelude::*;
-use rustitude::prelude::*;
+use rustitude_core::prelude::*;
 
 #[derive(Default)]
 pub struct OmegaDalitz {
@@ -11,6 +11,8 @@ pub struct OmegaDalitz {
 impl Node for OmegaDalitz {
     fn precalculate(&mut self, dataset: &Dataset) {
         (self.dalitz_z, (self.dalitz_sin3theta, self.lambda)) = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let pi0 = event.daughter_p4s[0];

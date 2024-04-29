@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use factorial::Factorial;
 use nalgebra::Vector3;
-use rustitude::prelude::*;
+use rustitude_core::prelude::*;
 use sphrs::Coordinates;
 
 pub fn breakup_momentum(m0: f64, m1: f64, m2: f64) -> f64 {

@@ -4,7 +4,7 @@ use std::f64::consts::PI;
 
 use nalgebra::{SMatrix, SVector};
 use rayon::prelude::*;
-use rustitude::prelude::*;
+use rustitude_core::prelude::*;
 
 #[derive(Default)]
 pub struct BreitWigner {
@@ -30,6 +30,8 @@ impl BreitWigner {
 impl Node for BreitWigner {
     fn precalculate(&mut self, dataset: &Dataset) {
         (self.m, (self.m1, (self.m2, (self.q, self.f)))) = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let p1: FourMomentum = self
@@ -202,6 +204,8 @@ impl KMatrixF0 {
 impl Node for KMatrixF0 {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.2 = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
@@ -275,6 +279,8 @@ impl KMatrixF2 {
 impl Node for KMatrixF2 {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.2 = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
@@ -342,6 +348,8 @@ impl KMatrixA0 {
 impl Node for KMatrixA0 {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.2 = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
@@ -405,6 +413,8 @@ impl KMatrixA2 {
 impl Node for KMatrixA2 {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.2 = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
@@ -468,6 +478,8 @@ impl KMatrixRho {
 impl Node for KMatrixRho {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.2 = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();
@@ -529,6 +541,8 @@ impl KMatrixPi1 {
 impl Node for KMatrixPi1 {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.2 = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let s = (event.daughter_p4s[0] + event.daughter_p4s[1]).m2();

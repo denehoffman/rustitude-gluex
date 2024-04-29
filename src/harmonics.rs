@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use num_complex::ComplexFloat;
 use rayon::prelude::*;
-use rustitude::prelude::*;
+use rustitude_core::prelude::*;
 use sphrs::{ComplexSH, SHEval};
 
 use crate::utils::{Frame, Part, Reflectivity, Wave};
@@ -28,6 +28,8 @@ impl Node for Ylm {
 
     fn precalculate(&mut self, dataset: &Dataset) {
         self.data = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let resonance = event.daughter_p4s[0] + event.daughter_p4s[1];
@@ -64,6 +66,8 @@ impl Zlm {
 impl Node for Zlm {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.data = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let resonance = event.daughter_p4s[0] + event.daughter_p4s[1];
@@ -120,6 +124,8 @@ impl OnePS {
 impl Node for OnePS {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.data = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let resonance = event.daughter_p4s[0] + event.daughter_p4s[1];
@@ -178,6 +184,8 @@ impl TwoPS {
 impl Node for TwoPS {
     fn precalculate(&mut self, dataset: &Dataset) {
         self.data = dataset
+            .events
+            .read()
             .par_iter()
             .map(|event| {
                 let resonance = event.daughter_p4s[0] + event.daughter_p4s[1];

@@ -5,6 +5,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.2 (2024-04-29)
+
+### Chore
+
+ - <csr-id-066062486c30e0df1760aa67e7df2ff14e082e52/> Create LICENSE
+
+### Documentation
+
+ - <csr-id-33b8eaf2481fb0e013fb683f3f75d64a813f6d60/> fix README.md link to documentation
+ - <csr-id-45e4cf8e192492f400fa1394ca3be5fd2e8ab1ea/> fix badge links in README.md
+
+### New Features
+
+ - <csr-id-ab6c8883b3676c837d168cb91053d6ea9b2b1330/> implement ThreePiAnglesSchilling.cc as sdmes::ThreePiSDME
+ - <csr-id-b857ee844d4c12b242d4d8239c02c9c88ea8c1b8/> implement TwoPiAngles.cc as sdmes::TwoPiSDME
+ - <csr-id-83d46cfdb1fb4b4ef65f5fa3b5c2be3b30ad4532/> refactor harmonics::{ReZlm, ImZlm} and add OnePS and TwoPS
+   Added Frame and Part enums to be used with all of these amplitudes to simplify requests for just the real or imaginary parts of amplitudes. Additionally, we can now specify the Frame (Helicity/GJ). Therefore, we only need a Zlm struct rather than the split structs before.
+ - <csr-id-f6b4e0d0408e6be431c3947098512b51ad5a253a/> add helper methods for Wigner D-matrices
+
+### Bug Fixes
+
+ - <csr-id-7175f39998c4156988799cf5e599bf840aca6d8d/> switch from rustitude to rustitude_core dependency
+ - <csr-id-77dec26ac644811614ff735c229c2016882c392f/> modify the way Frames work with daughter vector inputs
+   This is in preparation for the ThreePiAnglesSchilling.cc implementation.
+ - <csr-id-5caca39cac184296ed6eb1a3de2258fc6cf51d36/> move useful enums into utils
+ - <csr-id-87b83e8bb22fb1135862cf4138f26388a2ee17bc/> make OmegaDalitz public
+
+### Other
+
+ - <csr-id-685288f07f38eb5b3b7d773bf989bb6a2bc034ee/> remove local dependency
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 12 commits contributed to the release over the course of 19 calendar days.
+ - 19 days passed between releases.
+ - 12 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Switch from rustitude to rustitude_core dependency ([`7175f39`](https://github.com/denehoffman/rustitude-gluex/commit/7175f39998c4156988799cf5e599bf840aca6d8d))
+    - Implement ThreePiAnglesSchilling.cc as sdmes::ThreePiSDME ([`ab6c888`](https://github.com/denehoffman/rustitude-gluex/commit/ab6c8883b3676c837d168cb91053d6ea9b2b1330))
+    - Modify the way Frames work with daughter vector inputs ([`77dec26`](https://github.com/denehoffman/rustitude-gluex/commit/77dec26ac644811614ff735c229c2016882c392f))
+    - Implement TwoPiAngles.cc as sdmes::TwoPiSDME ([`b857ee8`](https://github.com/denehoffman/rustitude-gluex/commit/b857ee844d4c12b242d4d8239c02c9c88ea8c1b8))
+    - Move useful enums into utils ([`5caca39`](https://github.com/denehoffman/rustitude-gluex/commit/5caca39cac184296ed6eb1a3de2258fc6cf51d36))
+    - Refactor harmonics::{ReZlm, ImZlm} and add OnePS and TwoPS ([`83d46cf`](https://github.com/denehoffman/rustitude-gluex/commit/83d46cfdb1fb4b4ef65f5fa3b5c2be3b30ad4532))
+    - Add helper methods for Wigner D-matrices ([`f6b4e0d`](https://github.com/denehoffman/rustitude-gluex/commit/f6b4e0d0408e6be431c3947098512b51ad5a253a))
+    - Remove local dependency ([`685288f`](https://github.com/denehoffman/rustitude-gluex/commit/685288f07f38eb5b3b7d773bf989bb6a2bc034ee))
+    - Make OmegaDalitz public ([`87b83e8`](https://github.com/denehoffman/rustitude-gluex/commit/87b83e8bb22fb1135862cf4138f26388a2ee17bc))
+    - Fix README.md link to documentation ([`33b8eaf`](https://github.com/denehoffman/rustitude-gluex/commit/33b8eaf2481fb0e013fb683f3f75d64a813f6d60))
+    - Create LICENSE ([`0660624`](https://github.com/denehoffman/rustitude-gluex/commit/066062486c30e0df1760aa67e7df2ff14e082e52))
+    - Fix badge links in README.md ([`45e4cf8`](https://github.com/denehoffman/rustitude-gluex/commit/45e4cf8e192492f400fa1394ca3be5fd2e8ab1ea))
+</details>
+
 ## v0.1.1 (2024-04-10)
 
 <csr-id-9899faf055e30e68db3a88e09a5064c4767f8882/>
@@ -42,7 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 9 commits contributed to the release over the course of 4 calendar days.
+ - 10 commits contributed to the release over the course of 4 calendar days.
  - 7 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -53,6 +114,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release rustitude-gluex v0.1.1 ([`d218125`](https://github.com/denehoffman/rustitude-gluex/commit/d2181259346e576f1d95184c6b8d25ca03447234))
     - Release rustitude-gluex v0.1.1 ([`2b5bd9b`](https://github.com/denehoffman/rustitude-gluex/commit/2b5bd9ba373ec5755f1f3cf8804efb43cca2e3bb))
     - Update rustitude version ([`9899faf`](https://github.com/denehoffman/rustitude-gluex/commit/9899faf055e30e68db3a88e09a5064c4767f8882))
     - Create rust.yml ([`c53ab0d`](https://github.com/denehoffman/rustitude-gluex/commit/c53ab0d05b5adf9a241f74626361dba127f631bc))

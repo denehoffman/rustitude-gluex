@@ -1016,6 +1016,7 @@ dependencies = [
 [[package]]
 name = "rustitude-core"
 version = "0.3.2"
+source = "git+https://github.com/denehoffman/rustitude-core.git#4eacf02e4137d6a3d2318729c9b25d0c1a1b2d92"
 dependencies = [
  "approx",
  "indexmap",

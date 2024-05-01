@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, str::FromStr};
 
 use factorial::Factorial;
 use nalgebra::Vector3;
@@ -74,6 +74,25 @@ pub enum Part {
     Both,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParsePartError;
+
+impl FromStr for Part {
+    type Err = ParsePartError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_ref() {
+            "real" => Ok(Part::Real),
+            "re" => Ok(Part::Real),
+            "imaginary" => Ok(Part::Imag),
+            "imag" => Ok(Part::Imag),
+            "im" => Ok(Part::Imag),
+            "both" => Ok(Part::Both),
+            _ => Err(ParsePartError),
+        }
+    }
+}
+
 #[derive(Clone, Copy, Default)]
 #[rustfmt::skip]
 pub enum Wave {
@@ -87,6 +106,36 @@ pub enum Wave {
 
 #[rustfmt::skip]
 impl Wave {
+    pub fn new(l: usize, m: isize) -> Self {
+        match l {
+            0 => Self::S0,
+            1 => match m {
+                -1 => Self::Pn1,
+                0 => Self::P0,
+                1 => Self::P1,
+                _ => panic!("|m = {m}| > (l = {l})")
+            }
+            2 => match m {
+                -2 => Self::Dn2,
+                -1 => Self::Dn1,
+                0 => Self::D0,
+                1 => Self::D1,
+                2 => Self::D2,
+                _ => panic!("|m = {m}| > (l = {l})")
+            }
+            3 => match m {
+                -3 => Self::Fn3,
+                -2 => Self::Fn2,
+                -1 => Self::Fn1,
+                0 => Self::F0,
+                1 => Self::F1,
+                2 => Self::F2,
+                3 => Self::F3,
+                _ => panic!("|m = {m}| > (l = {l})")
+            }
+            _ => panic!("(l = {l}) > 3 is not yet implemented!")
+        }
+    }
     pub fn l(&self) -> i64 {
         match self {
             Self::S0 | Self::S => 0,
@@ -125,6 +174,23 @@ impl Display for Wave {
 pub enum Frame {
     Helicity,
     GottfriedJackson,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseFrameError;
+
+impl FromStr for Frame {
+    type Err = ParseFrameError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_ref() {
+            "helicity" => Ok(Frame::Helicity),
+            "hx" => Ok(Frame::Helicity),
+            "gottfried-jackson" => Ok(Frame::GottfriedJackson),
+            "gj" => Ok(Frame::GottfriedJackson),
+            _ => Err(ParseFrameError),
+        }
+    }
 }
 
 impl Frame {
@@ -181,6 +247,30 @@ impl Frame {
 pub enum Reflectivity {
     Positive = 1,
     Negative = -1,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseReflectivityError;
+
+impl FromStr for Reflectivity {
+    type Err = ParseReflectivityError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_ref() {
+            "positive" => Ok(Reflectivity::Positive),
+            "pos" => Ok(Reflectivity::Positive),
+            "p" => Ok(Reflectivity::Positive),
+            "+" => Ok(Reflectivity::Positive),
+            "plus" => Ok(Reflectivity::Positive),
+            "negative" => Ok(Reflectivity::Negative),
+            "neg" => Ok(Reflectivity::Negative),
+            "n" => Ok(Reflectivity::Negative),
+            "-" => Ok(Reflectivity::Negative),
+            "minus" => Ok(Reflectivity::Negative),
+            "m" => Ok(Reflectivity::Negative),
+            _ => Err(ParseReflectivityError),
+        }
+    }
 }
 
 impl Display for Reflectivity {

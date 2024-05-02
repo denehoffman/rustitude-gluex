@@ -5,7 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.3 (2024-05-02)
+
+### Chore
+
+ - <csr-id-c91284ad855463940c849c8c11f7c43d67c35288/> update rustitude-core version
+
+### New Features
+
+ - <csr-id-3e3619b4736c93ecd5094c4bbd150221afb17bd6/> add pyo3 bindings for all current modules and amplitudes
+ - <csr-id-a94baf2dc37165d5911bb72c336fdae0355dff92/> add parsers for current util enums
+
+### Other
+
+ - <csr-id-de2a33d7f496862d82ebf488b43e5750548afd94/> update Cargo.toml
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 4 commits contributed to the release over the course of 2 calendar days.
+ - 3 days passed between releases.
+ - 4 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Update rustitude-core version ([`c91284a`](https://github.com/denehoffman/rustitude-gluex/commit/c91284ad855463940c849c8c11f7c43d67c35288))
+    - Add pyo3 bindings for all current modules and amplitudes ([`3e3619b`](https://github.com/denehoffman/rustitude-gluex/commit/3e3619b4736c93ecd5094c4bbd150221afb17bd6))
+    - Add parsers for current util enums ([`a94baf2`](https://github.com/denehoffman/rustitude-gluex/commit/a94baf2dc37165d5911bb72c336fdae0355dff92))
+    - Update Cargo.toml ([`de2a33d`](https://github.com/denehoffman/rustitude-gluex/commit/de2a33d7f496862d82ebf488b43e5750548afd94))
+</details>
+
 ## v0.1.2 (2024-04-29)
+
+<csr-id-066062486c30e0df1760aa67e7df2ff14e082e52/>
+<csr-id-685288f07f38eb5b3b7d773bf989bb6a2bc034ee/>
 
 ### Chore
 
@@ -40,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 12 commits contributed to the release over the course of 19 calendar days.
+ - 13 commits contributed to the release over the course of 19 calendar days.
  - 19 days passed between releases.
  - 12 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -52,6 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release rustitude-gluex v0.1.2 ([`c9f057f`](https://github.com/denehoffman/rustitude-gluex/commit/c9f057f58bc7745e021f7287a884e97327e3b6dc))
     - Switch from rustitude to rustitude_core dependency ([`7175f39`](https://github.com/denehoffman/rustitude-gluex/commit/7175f39998c4156988799cf5e599bf840aca6d8d))
     - Implement ThreePiAnglesSchilling.cc as sdmes::ThreePiSDME ([`ab6c888`](https://github.com/denehoffman/rustitude-gluex/commit/ab6c8883b3676c837d168cb91053d6ea9b2b1330))
     - Modify the way Frames work with daughter vector inputs ([`77dec26`](https://github.com/denehoffman/rustitude-gluex/commit/77dec26ac644811614ff735c229c2016882c392f))

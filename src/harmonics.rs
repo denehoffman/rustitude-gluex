@@ -1,6 +1,7 @@
 use std::f64::consts::PI;
 
 use num_complex::ComplexFloat;
+use pyo3::prelude::*;
 use rayon::prelude::*;
 use rustitude_core::prelude::*;
 use sphrs::{ComplexSH, SHEval};
@@ -227,4 +228,78 @@ impl Node for TwoPS {
     fn parameters(&self) -> Option<Vec<String>> {
         None
     }
+}
+
+#[pyfunction]
+#[pyo3(name = "Ylm", signature = (name, l, m, frame="helicity"))]
+fn ylm(name: &str, l: usize, m: isize, frame: &str) -> Amplitude {
+    Amplitude::new(
+        name,
+        Box::new(Ylm::new(
+            Wave::new(l, m),
+            <Frame as std::str::FromStr>::from_str(frame).unwrap(),
+        )),
+    )
+}
+
+#[pyfunction]
+#[pyo3(name = "Zlm", signature = (name, l, m, reflectivity="positive", part="real", frame="helicity"))]
+fn zlm(name: &str, l: usize, m: isize, reflectivity: &str, part: &str, frame: &str) -> Amplitude {
+    Amplitude::new(
+        name,
+        Box::new(Zlm::new(
+            Wave::new(l, m),
+            <Reflectivity as std::str::FromStr>::from_str(reflectivity).unwrap(),
+            <Part as std::str::FromStr>::from_str(part).unwrap(),
+            <Frame as std::str::FromStr>::from_str(frame).unwrap(),
+        )),
+    )
+}
+
+#[pyfunction]
+#[pyo3(name = "OnePS", signature = (name, reflectivity="positive", part="real", frame="helicity"))]
+fn one_ps(name: &str, reflectivity: &str, part: &str, frame: &str) -> Amplitude {
+    Amplitude::new(
+        name,
+        Box::new(OnePS::new(
+            <Reflectivity as std::str::FromStr>::from_str(reflectivity).unwrap(),
+            <Part as std::str::FromStr>::from_str(part).unwrap(),
+            <Frame as std::str::FromStr>::from_str(frame).unwrap(),
+        )),
+    )
+}
+
+#[pyfunction]
+#[pyo3(name = "TwoPS", signature = (name, l, m, reflectivity="positive", part="real", frame="helicity"))]
+fn two_ps(
+    name: &str,
+    l: usize,
+    m: isize,
+    reflectivity: &str,
+    part: &str,
+    frame: &str,
+) -> Amplitude {
+    Amplitude::new(
+        name,
+        Box::new(TwoPS::new(
+            Wave::new(l, m),
+            <Reflectivity as std::str::FromStr>::from_str(reflectivity).unwrap(),
+            <Part as std::str::FromStr>::from_str(part).unwrap(),
+            <Frame as std::str::FromStr>::from_str(frame).unwrap(),
+        )),
+    )
+}
+pub fn register_module(parent: &Bound<'_, PyModule>) -> PyResult<()> {
+    let m = PyModule::new_bound(parent.py(), "rustitude.gluex.harmonics")?;
+    m.add_function(wrap_pyfunction!(ylm, &m)?)?;
+    m.add_function(wrap_pyfunction!(zlm, &m)?)?;
+    m.add_function(wrap_pyfunction!(one_ps, &m)?)?;
+    m.add_function(wrap_pyfunction!(two_ps, &m)?)?;
+    parent.add("harmonics", &m)?;
+    parent
+        .py()
+        .import_bound("sys")?
+        .getattr("modules")?
+        .set_item("rustitude.gluex.harmonics", &m)?;
+    Ok(())
 }

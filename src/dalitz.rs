@@ -1,3 +1,4 @@
+use pyo3::prelude::*;
 use rayon::prelude::*;
 use rustitude_core::prelude::*;
 
@@ -72,4 +73,21 @@ impl Node for OmegaDalitz {
             "delta".to_string(),
         ])
     }
+}
+
+#[pyfunction(name = "OmegaDalitz")]
+fn omega_dalitz(name: &str) -> Amplitude {
+    Amplitude::new(name, Box::<OmegaDalitz>::default())
+}
+
+pub fn register_module(parent: &Bound<'_, PyModule>) -> PyResult<()> {
+    let m = PyModule::new_bound(parent.py(), "rustitude.gluex.dalitz")?;
+    m.add_function(wrap_pyfunction!(omega_dalitz, &m)?)?;
+    parent.add("dalitz", &m)?;
+    parent
+        .py()
+        .import_bound("sys")?
+        .getattr("modules")?
+        .set_item("rustitude.gluex.dalitz", &m)?;
+    Ok(())
 }

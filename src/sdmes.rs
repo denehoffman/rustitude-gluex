@@ -1,3 +1,4 @@
+use pyo3::prelude::*;
 use rayon::prelude::*;
 use rustitude_core::prelude::*;
 use sphrs::SHCoordinates;
@@ -188,4 +189,38 @@ impl Node for ThreePiSDME {
             "rho_1n12".to_string(),
         ])
     }
+}
+
+#[pyfunction]
+#[pyo3(name = "TwoPiSDME", signature = (name, frame="helicity"))]
+fn two_pi_sdme(name: &str, frame: &str) -> Amplitude {
+    Amplitude::new(
+        name,
+        Box::new(TwoPiSDME::new(
+            <Frame as std::str::FromStr>::from_str(frame).unwrap(),
+        )),
+    )
+}
+#[pyfunction]
+#[pyo3(name = "ThreePiSDME", signature = (name, frame="helicity"))]
+fn three_pi_sdme(name: &str, frame: &str) -> Amplitude {
+    Amplitude::new(
+        name,
+        Box::new(ThreePiSDME::new(
+            <Frame as std::str::FromStr>::from_str(frame).unwrap(),
+        )),
+    )
+}
+
+pub fn register_module(parent: &Bound<'_, PyModule>) -> PyResult<()> {
+    let m = PyModule::new_bound(parent.py(), "rustitude.gluex.sdmes")?;
+    m.add_function(wrap_pyfunction!(two_pi_sdme, &m)?)?;
+    m.add_function(wrap_pyfunction!(three_pi_sdme, &m)?)?;
+    parent.add("sdmes", &m)?;
+    parent
+        .py()
+        .import_bound("sys")?
+        .getattr("modules")?
+        .set_item("rustitude.gluex.sdmes", &m)?;
+    Ok(())
 }

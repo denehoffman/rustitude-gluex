@@ -212,11 +212,17 @@ fn three_pi_sdme(name: &str, frame: &str) -> Amplitude {
     )
 }
 
+#[pymodule]
+fn sdmes(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(two_pi_sdme, m)?)?;
+    m.add_function(wrap_pyfunction!(three_pi_sdme, m)?)?;
+    Ok(())
+}
+
 pub fn register_module(parent: &Bound<'_, PyModule>) -> PyResult<()> {
     let m = PyModule::new_bound(parent.py(), "rustitude.gluex.sdmes")?;
-    m.add_function(wrap_pyfunction!(two_pi_sdme, &m)?)?;
-    m.add_function(wrap_pyfunction!(three_pi_sdme, &m)?)?;
-    parent.add("sdmes", &m)?;
+    sdmes(&m)?;
+    parent.add_submodule(&m)?;
     parent
         .py()
         .import_bound("sys")?

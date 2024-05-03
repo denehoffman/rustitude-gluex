@@ -290,23 +290,10 @@ fn two_ps(
     )
 }
 
-#[pymodule]
-fn harmonics(m: &Bound<'_, PyModule>) -> PyResult<()> {
+pub fn pyo3_module(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(ylm, m)?)?;
     m.add_function(wrap_pyfunction!(zlm, m)?)?;
     m.add_function(wrap_pyfunction!(one_ps, m)?)?;
     m.add_function(wrap_pyfunction!(two_ps, m)?)?;
-    Ok(())
-}
-
-pub fn register_module(parent: &Bound<'_, PyModule>) -> PyResult<()> {
-    let m = PyModule::new_bound(parent.py(), "rustitude.gluex.harmonics")?;
-    harmonics(&m)?;
-    parent.add_submodule(&m)?;
-    parent
-        .py()
-        .import_bound("sys")?
-        .getattr("modules")?
-        .set_item("rustitude.gluex.harmonics", &m)?;
     Ok(())
 }

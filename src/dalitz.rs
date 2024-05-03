@@ -80,20 +80,7 @@ fn omega_dalitz(name: &str) -> Amplitude {
     Amplitude::new(name, Box::<OmegaDalitz>::default())
 }
 
-#[pymodule]
-fn dalitz(m: &Bound<'_, PyModule>) -> PyResult<()> {
+pub fn pyo3_module(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(omega_dalitz, m)?)?;
-    Ok(())
-}
-
-pub fn register_module(parent: &Bound<'_, PyModule>) -> PyResult<()> {
-    let m = PyModule::new_bound(parent.py(), "rustitude.gluex.dalitz")?;
-    dalitz(&m)?;
-    parent.add_submodule(&m)?;
-    parent
-        .py()
-        .import_bound("sys")?
-        .getattr("modules")?
-        .set_item("rustitude.gluex.dalitz", &m)?;
     Ok(())
 }

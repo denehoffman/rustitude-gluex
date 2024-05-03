@@ -598,8 +598,7 @@ fn kmatrix_rho(name: &str, channel: usize) -> Amplitude {
     Amplitude::new(name, Box::new(KMatrixRho::new(channel)))
 }
 
-#[pymodule]
-fn resonances(m: &Bound<'_, PyModule>) -> PyResult<()> {
+pub fn pyo3_module(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(breit_wigner, m)?)?;
     m.add_function(wrap_pyfunction!(kmatrix_a0, m)?)?;
     m.add_function(wrap_pyfunction!(kmatrix_a2, m)?)?;
@@ -607,17 +606,5 @@ fn resonances(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(kmatrix_f2, m)?)?;
     m.add_function(wrap_pyfunction!(kmatrix_pi1, m)?)?;
     m.add_function(wrap_pyfunction!(kmatrix_rho, m)?)?;
-    Ok(())
-}
-
-pub fn register_module(parent: &Bound<'_, PyModule>) -> PyResult<()> {
-    let m = PyModule::new_bound(parent.py(), "rustitude.gluex.resonances")?;
-    resonances(&m)?;
-    parent.add_submodule(&m)?;
-    parent
-        .py()
-        .import_bound("sys")?
-        .getattr("modules")?
-        .set_item("rustitude.gluex.resonances", &m)?;
     Ok(())
 }

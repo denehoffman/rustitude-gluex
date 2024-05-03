@@ -1,6 +1,6 @@
 [package]
 name = "rustitude-gluex"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 authors = ["Nathaniel Dene Hoffman <dene@cmu.edu>"]
 description = "GlueX Amplitudes for Rustitude"

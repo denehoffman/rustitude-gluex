@@ -5,7 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.4 (2024-05-03)
+
+### Other
+
+ - <csr-id-fb1e8f512409dd34cc197a6e76a5376d3781eac9/> remove unused library that was causing compilation errors further on up
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 1 commit contributed to the release.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Remove unused library that was causing compilation errors further on up ([`fb1e8f5`](https://github.com/denehoffman/rustitude-gluex/commit/fb1e8f512409dd34cc197a6e76a5376d3781eac9))
+</details>
+
 ## v0.1.3 (2024-05-02)
+
+<csr-id-c91284ad855463940c849c8c11f7c43d67c35288/>
+<csr-id-de2a33d7f496862d82ebf488b43e5750548afd94/>
 
 ### Chore
 
@@ -24,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 4 commits contributed to the release over the course of 2 calendar days.
+ - 5 commits contributed to the release over the course of 2 calendar days.
  - 3 days passed between releases.
  - 4 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -36,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release rustitude-gluex v0.1.3 ([`bc719b7`](https://github.com/denehoffman/rustitude-gluex/commit/bc719b710211917101fc8e0f2c1bb2f163cab59c))
     - Update rustitude-core version ([`c91284a`](https://github.com/denehoffman/rustitude-gluex/commit/c91284ad855463940c849c8c11f7c43d67c35288))
     - Add pyo3 bindings for all current modules and amplitudes ([`3e3619b`](https://github.com/denehoffman/rustitude-gluex/commit/3e3619b4736c93ecd5094c4bbd150221afb17bd6))
     - Add parsers for current util enums ([`a94baf2`](https://github.com/denehoffman/rustitude-gluex/commit/a94baf2dc37165d5911bb72c336fdae0355dff92))

@@ -5,7 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.5 (2024-05-06)
+
+### Documentation
+
+ - <csr-id-c8c587aa724423bd901b2b194b40446105dca3d0/> Update README.md
+
+### Bug Fixes
+
+ - <csr-id-9d41bce7308c9839e1169c07365229c17be557d8/> minor updates to text format
+ - <csr-id-cc42f164db96559dda08a3b15d5074475625295c/> let the rustitude crate handle module inits
+ - <csr-id-e5a4a49fb9b945661d8c4ab9aeb72b597f2647a4/> update to include submodule initialization
+
+### Other
+
+ - <csr-id-78c524baa32d27ed65657d28ce1ef0eacde3ed0b/> update Cargo.lock
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 5 commits contributed to the release over the course of 3 calendar days.
+ - 3 days passed between releases.
+ - 5 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Update Cargo.lock ([`78c524b`](https://github.com/denehoffman/rustitude-gluex/commit/78c524baa32d27ed65657d28ce1ef0eacde3ed0b))
+    - Minor updates to text format ([`9d41bce`](https://github.com/denehoffman/rustitude-gluex/commit/9d41bce7308c9839e1169c07365229c17be557d8))
+    - Update README.md ([`c8c587a`](https://github.com/denehoffman/rustitude-gluex/commit/c8c587aa724423bd901b2b194b40446105dca3d0))
+    - Let the rustitude crate handle module inits ([`cc42f16`](https://github.com/denehoffman/rustitude-gluex/commit/cc42f164db96559dda08a3b15d5074475625295c))
+    - Update to include submodule initialization ([`e5a4a49`](https://github.com/denehoffman/rustitude-gluex/commit/e5a4a49fb9b945661d8c4ab9aeb72b597f2647a4))
+</details>
+
 ## v0.1.4 (2024-05-03)
+
+<csr-id-fb1e8f512409dd34cc197a6e76a5376d3781eac9/>
 
 ### Other
 
@@ -15,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 1 commit contributed to the release.
+ - 2 commits contributed to the release.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -26,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release rustitude-gluex v0.1.4 ([`45426dc`](https://github.com/denehoffman/rustitude-gluex/commit/45426dc7f88a8ff5e888cbd0c756adf1efbc94f9))
     - Remove unused library that was causing compilation errors further on up ([`fb1e8f5`](https://github.com/denehoffman/rustitude-gluex/commit/fb1e8f512409dd34cc197a6e76a5376d3781eac9))
 </details>
 

@@ -21,27 +21,24 @@
     <img src="https://img.shields.io/docsrs/rustitude-gluex" /></a>
 </p>
 
-
-### Note: This project is still very much under development and not recommended for use in actual research projects (yet)
-
 ### Table of Contents
 - [Overview](#Overview)
 - [Installation](#Installation)
 - [Usage](#Usage)
 
 ## Overview
-This is a library of amplitudes which are commonly used in analyses of [GlueX](http://gluex.org/) data
+This is a library of amplitudes which are commonly used in analyses of [GlueX](http://gluex.org/) data.
 
 ## Installation
 
-Cargo provides the usual command for including this crate in a project. You should also include the [rustitude](https://github.com/denehoffman/rustitude/) library, since this is just a support library to provide amplitudes to `rustitude`: 
-```sh
+Cargo provides the usual command for including this crate in a project, but what you are probably looking for is an installation of this crate alongside [`rustitude-core`](https://github.com/denehoffman/rustitude-core). These crates are bundled into the meta-crate [`rustitude`](https://github.com/denehoffman/rustitude), which has a `gluex` feature (currently on by default):
+
+```shell
 cargo add rustitude
-cargo add rustitude-gluex
 ```
 
 ## Usage
-See [rustitude](https://github.com/denehoffman/rustitude?tab=readme-ov-file#usage)'s documentation for more information on how to use this library.
+See [rustitude](https://github.com/denehoffman/rustitude)'s documentation for more information on how to use this library.
 
 ## TODOs
 

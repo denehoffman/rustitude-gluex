@@ -38,7 +38,7 @@ cargo add rustitude
 ```
 
 ## Usage
-See [rustitude](https://github.com/denehoffman/rustitude)'s documentation for more information on how to use this library.
+See [`rustitude`](https://github.com/denehoffman/rustitude)'s documentation for more information on how to use this library.
 
 ## TODOs
 
@@ -64,7 +64,7 @@ There are a few amplitudes from [halld_sim](https://github.com/JeffersonLab/hall
 | [Pi0ReggeModel.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/Pi0ReggeModel.cc) |  | :x: |
 | [Pi0SAID.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/Pi0SAID.cc) |  | :x: |
 | [PiPlusRegge.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/PiPlusRegge.cc) |  | :x: |
-| [Piecewise.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/Piecewise.cc) |  | :bangbang: |
+| [Piecewise.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/Piecewise.cc) | `rustitude::amplitude::Piecewise`  | :white_check_mark: |
 | [SinglePS.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/SinglePS.cc) | `rustitude-gluex::harmonics::OnePS` | :white_check_mark: |
 | [ThreePiAngles.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/ThreePiAngles.cc) |  | :bangbang: |
 | [ThreePiAnglesSchilling.cc](https://github.com/JeffersonLab/halld_sim/blob/master/src/libraries/AMPTOOLS_AMPS/ThreePiAnglesSchilling.cc) | `rustitude-gluex::sdmes::ThreePiSDME` | :white_check_mark: |

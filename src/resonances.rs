@@ -29,7 +29,7 @@ impl BreitWigner {
     }
 }
 impl Node for BreitWigner {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         (self.m, (self.m1, (self.m2, (self.q, self.f)))) = dataset
             .events
             .read()
@@ -52,10 +52,11 @@ impl Node for BreitWigner {
                 let f = blatt_weisskopf(m, m1, m2, self.l);
                 (m, (m1, (m2, (q, f))))
             })
-            .unzip()
+            .unzip();
+        Ok(())
     }
 
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let m = self.m[event.index];
         let m1 = self.m1[event.index];
         let m2 = self.m2[event.index];
@@ -66,11 +67,11 @@ impl Node for BreitWigner {
         let f0 = blatt_weisskopf(m0, m1, m2, self.l);
         let q0 = breakup_momentum(m0, m1, m2);
         let g = g0 * (m0 / m) * (q / q0) * (f.powi(2) / f0.powi(2));
-        f * (m0 * g0 / PI) / Complex64::new(m0.powi(2) - m.powi(2), -1.0 * m0 * g)
+        Ok(f * (m0 * g0 / PI) / Complex64::new(m0.powi(2) - m.powi(2), -1.0 * m0 * g))
     }
 
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec!["mass".to_string(), "width".to_string()])
+    fn parameters(&self) -> Vec<String> {
+        vec!["mass".to_string(), "width".to_string()]
     }
 }
 
@@ -203,7 +204,7 @@ impl KMatrixF0 {
 }
 
 impl Node for KMatrixF0 {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.2 = dataset
             .events
             .read()
@@ -218,8 +219,9 @@ impl Node for KMatrixF0 {
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
             .collect();
+        Ok(())
     }
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let betas = SVector::<Complex64, 5>::new(
             Complex64::new(parameters[0], parameters[1]),
             Complex64::new(parameters[2], parameters[3]),
@@ -228,10 +230,14 @@ impl Node for KMatrixF0 {
             Complex64::new(parameters[8], parameters[9]),
         );
         let (ikc_inv_vec, pvector_constants_mat) = self.2[event.index];
-        KMatrixConstants::calculate_k_matrix(&betas, &ikc_inv_vec, &pvector_constants_mat)
+        Ok(KMatrixConstants::calculate_k_matrix(
+            &betas,
+            &ikc_inv_vec,
+            &pvector_constants_mat,
+        ))
     }
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec![
+    fn parameters(&self) -> Vec<String> {
+        vec![
             "f0_500 re".to_string(),
             "f0_500 im".to_string(),
             "f0_980 re".to_string(),
@@ -242,7 +248,7 @@ impl Node for KMatrixF0 {
             "f0_1500 im".to_string(),
             "f0_1710 re".to_string(),
             "f0_1710 im".to_string(),
-        ])
+        ]
     }
 }
 pub struct KMatrixF2(
@@ -278,7 +284,7 @@ impl KMatrixF2 {
 }
 
 impl Node for KMatrixF2 {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.2 = dataset
             .events
             .read()
@@ -293,8 +299,9 @@ impl Node for KMatrixF2 {
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
             .collect();
+        Ok(())
     }
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let betas = SVector::<Complex64, 4>::new(
             Complex64::new(parameters[0], parameters[1]),
             Complex64::new(parameters[2], parameters[3]),
@@ -302,10 +309,14 @@ impl Node for KMatrixF2 {
             Complex64::new(parameters[6], parameters[7]),
         );
         let (ikc_inv_vec, pvector_constants_mat) = self.2[event.index];
-        KMatrixConstants::calculate_k_matrix(&betas, &ikc_inv_vec, &pvector_constants_mat)
+        Ok(KMatrixConstants::calculate_k_matrix(
+            &betas,
+            &ikc_inv_vec,
+            &pvector_constants_mat,
+        ))
     }
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec![
+    fn parameters(&self) -> Vec<String> {
+        vec![
             "f2_1270 re".to_string(),
             "f2_1270 im".to_string(),
             "f2_1525 re".to_string(),
@@ -314,7 +325,7 @@ impl Node for KMatrixF2 {
             "f2_1810 im".to_string(),
             "f2_1950 re".to_string(),
             "f2_1950 im".to_string(),
-        ])
+        ]
     }
 }
 
@@ -347,7 +358,7 @@ impl KMatrixA0 {
 }
 
 impl Node for KMatrixA0 {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.2 = dataset
             .events
             .read()
@@ -362,22 +373,27 @@ impl Node for KMatrixA0 {
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
             .collect();
+        Ok(())
     }
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let betas = SVector::<Complex64, 2>::new(
             Complex64::new(parameters[0], parameters[1]),
             Complex64::new(parameters[2], parameters[3]),
         );
         let (ikc_inv_vec, pvector_constants_mat) = self.2[event.index];
-        KMatrixConstants::calculate_k_matrix(&betas, &ikc_inv_vec, &pvector_constants_mat)
+        Ok(KMatrixConstants::calculate_k_matrix(
+            &betas,
+            &ikc_inv_vec,
+            &pvector_constants_mat,
+        ))
     }
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec![
+    fn parameters(&self) -> Vec<String> {
+        vec![
             "a0_980 re".to_string(),
             "a0_980 im".to_string(),
             "a0_1450 re".to_string(),
             "a0_1450 im".to_string(),
-        ])
+        ]
     }
 }
 
@@ -412,7 +428,7 @@ impl KMatrixA2 {
 }
 
 impl Node for KMatrixA2 {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.2 = dataset
             .events
             .read()
@@ -427,22 +443,27 @@ impl Node for KMatrixA2 {
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
             .collect();
+        Ok(())
     }
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let betas = SVector::<Complex64, 2>::new(
             Complex64::new(parameters[0], parameters[1]),
             Complex64::new(parameters[2], parameters[3]),
         );
         let (ikc_inv_vec, pvector_constants_mat) = self.2[event.index];
-        KMatrixConstants::calculate_k_matrix(&betas, &ikc_inv_vec, &pvector_constants_mat)
+        Ok(KMatrixConstants::calculate_k_matrix(
+            &betas,
+            &ikc_inv_vec,
+            &pvector_constants_mat,
+        ))
     }
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec![
+    fn parameters(&self) -> Vec<String> {
+        vec![
             "a2_1320 re".to_string(),
             "a2_1320 im".to_string(),
             "a2_1700 re".to_string(),
             "a2_1700 im".to_string(),
-        ])
+        ]
     }
 }
 
@@ -477,7 +498,7 @@ impl KMatrixRho {
 }
 
 impl Node for KMatrixRho {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.2 = dataset
             .events
             .read()
@@ -492,22 +513,27 @@ impl Node for KMatrixRho {
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
             .collect();
+        Ok(())
     }
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let betas = SVector::<Complex64, 2>::new(
             Complex64::new(parameters[0], parameters[1]),
             Complex64::new(parameters[2], parameters[3]),
         );
         let (ikc_inv_vec, pvector_constants_mat) = self.2[event.index];
-        KMatrixConstants::calculate_k_matrix(&betas, &ikc_inv_vec, &pvector_constants_mat)
+        Ok(KMatrixConstants::calculate_k_matrix(
+            &betas,
+            &ikc_inv_vec,
+            &pvector_constants_mat,
+        ))
     }
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec![
+    fn parameters(&self) -> Vec<String> {
+        vec![
             "rho_770 re".to_string(),
             "rho_770 im".to_string(),
             "rho_1700 re".to_string(),
             "rho_1700 im".to_string(),
-        ])
+        ]
     }
 }
 
@@ -540,7 +566,7 @@ impl KMatrixPi1 {
 }
 
 impl Node for KMatrixPi1 {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.2 = dataset
             .events
             .read()
@@ -555,47 +581,53 @@ impl Node for KMatrixPi1 {
                 (self.1.ikc_inv(s, self.0), pvector_constants)
             })
             .collect();
+        Ok(())
     }
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let betas = SVector::<Complex64, 1>::new(Complex64::new(parameters[0], parameters[1]));
         let (ikc_inv_vec, pvector_constants_mat) = self.2[event.index];
-        KMatrixConstants::calculate_k_matrix(&betas, &ikc_inv_vec, &pvector_constants_mat)
+        Ok(KMatrixConstants::calculate_k_matrix(
+            &betas,
+            &ikc_inv_vec,
+            &pvector_constants_mat,
+        ))
     }
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec!["pi1_1600 re".to_string(), "pi1_1600 im".to_string()])
+    fn parameters(&self) -> Vec<String> {
+        vec!["pi1_1600 re".to_string(), "pi1_1600 im".to_string()]
     }
 }
 
 #[pyfunction(name = "BreitWigner")]
-fn breit_wigner(name: &str, p1_indices: Vec<usize>, p2_indices: Vec<usize>, l: usize) -> Amplitude {
+fn breit_wigner(name: &str, p1_indices: Vec<usize>, p2_indices: Vec<usize>, l: usize) -> PyAmpOp {
     Amplitude::new(
         name,
         Box::new(BreitWigner::new(&p1_indices, &p2_indices, l)),
     )
+    .into()
 }
 #[pyfunction(name = "KMatrixA0")]
-fn kmatrix_a0(name: &str, channel: usize) -> Amplitude {
-    Amplitude::new(name, Box::new(KMatrixA0::new(channel)))
+fn kmatrix_a0(name: &str, channel: usize) -> PyAmpOp {
+    Amplitude::new(name, Box::new(KMatrixA0::new(channel))).into()
 }
 #[pyfunction(name = "KMatrixA2")]
-fn kmatrix_a2(name: &str, channel: usize) -> Amplitude {
-    Amplitude::new(name, Box::new(KMatrixA2::new(channel)))
+fn kmatrix_a2(name: &str, channel: usize) -> PyAmpOp {
+    Amplitude::new(name, Box::new(KMatrixA2::new(channel))).into()
 }
 #[pyfunction(name = "KMatrixF0")]
-fn kmatrix_f0(name: &str, channel: usize) -> Amplitude {
-    Amplitude::new(name, Box::new(KMatrixF0::new(channel)))
+fn kmatrix_f0(name: &str, channel: usize) -> PyAmpOp {
+    Amplitude::new(name, Box::new(KMatrixF0::new(channel))).into()
 }
 #[pyfunction(name = "KMatrixF2")]
-fn kmatrix_f2(name: &str, channel: usize) -> Amplitude {
-    Amplitude::new(name, Box::new(KMatrixF2::new(channel)))
+fn kmatrix_f2(name: &str, channel: usize) -> PyAmpOp {
+    Amplitude::new(name, Box::new(KMatrixF2::new(channel))).into()
 }
 #[pyfunction(name = "KMatrixPi1")]
-fn kmatrix_pi1(name: &str, channel: usize) -> Amplitude {
-    Amplitude::new(name, Box::new(KMatrixPi1::new(channel)))
+fn kmatrix_pi1(name: &str, channel: usize) -> PyAmpOp {
+    Amplitude::new(name, Box::new(KMatrixPi1::new(channel))).into()
 }
 #[pyfunction(name = "KMatrixRho")]
-fn kmatrix_rho(name: &str, channel: usize) -> Amplitude {
-    Amplitude::new(name, Box::new(KMatrixRho::new(channel)))
+fn kmatrix_rho(name: &str, channel: usize) -> PyAmpOp {
+    Amplitude::new(name, Box::new(KMatrixRho::new(channel))).into()
 }
 
 pub fn pyo3_module(m: &Bound<'_, PyModule>) -> PyResult<()> {

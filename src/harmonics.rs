@@ -6,7 +6,7 @@ use rayon::prelude::*;
 use rustitude_core::prelude::*;
 use sphrs::{ComplexSH, SHEval};
 
-use crate::utils::{Frame, Part, Reflectivity, Wave};
+use crate::utils::{Frame, Reflectivity, Wave};
 
 pub struct Ylm {
     wave: Wave,
@@ -23,11 +23,7 @@ impl Ylm {
     }
 }
 impl Node for Ylm {
-    fn parameters(&self) -> Option<Vec<String>> {
-        None
-    }
-
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.data = dataset
             .events
             .read()
@@ -39,33 +35,32 @@ impl Node for Ylm {
                 ComplexSH::Spherical.eval(self.wave.l(), self.wave.m(), &p)
             })
             .collect();
+        Ok(())
     }
 
-    fn calculate(&self, _parameters: &[f64], event: &Event) -> Complex64 {
-        self.data[event.index]
+    fn calculate(&self, _parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
+        Ok(self.data[event.index])
     }
 }
 
 pub struct Zlm {
     wave: Wave,
     reflectivity: Reflectivity,
-    part: Part,
     frame: Frame,
     data: Vec<Complex64>,
 }
 impl Zlm {
-    pub fn new(wave: Wave, reflectivity: Reflectivity, part: Part, frame: Frame) -> Self {
+    pub fn new(wave: Wave, reflectivity: Reflectivity, frame: Frame) -> Self {
         Self {
             wave,
             reflectivity,
-            part,
             frame,
             data: Vec::default(),
         }
     }
 }
 impl Node for Zlm {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.data = dataset
             .events
             .read()
@@ -86,44 +81,35 @@ impl Node for Zlm {
 
                 let phase = Complex64::cis(-big_phi);
                 let zlm = ylm * phase;
-                let zlm_part: Complex64 = match self.part {
-                    Part::Real => zlm.re.into(),
-                    Part::Imag => zlm.im.into(),
-                    Part::Both => zlm,
-                };
                 match self.reflectivity {
-                    Reflectivity::Positive => (1.0 + pgamma).sqrt() * zlm_part,
-                    Reflectivity::Negative => (1.0 - pgamma).sqrt() * zlm_part,
+                    Reflectivity::Positive => (1.0 + pgamma).sqrt() * zlm,
+                    Reflectivity::Negative => (1.0 - pgamma).sqrt() * zlm,
                 }
             })
-            .collect()
+            .collect();
+        Ok(())
     }
-    fn calculate(&self, _parameters: &[f64], event: &Event) -> Complex64 {
-        self.data[event.index]
-    }
-    fn parameters(&self) -> Option<Vec<String>> {
-        None
+    fn calculate(&self, _parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
+        Ok(self.data[event.index])
     }
 }
 
 pub struct OnePS {
     reflectivity: Reflectivity,
-    part: Part,
     frame: Frame,
     data: Vec<Complex64>,
 }
 impl OnePS {
-    pub fn new(reflectivity: Reflectivity, part: Part, frame: Frame) -> Self {
+    pub fn new(reflectivity: Reflectivity, frame: Frame) -> Self {
         Self {
             reflectivity,
-            part,
             frame,
             data: Vec::default(),
         }
     }
 }
 impl Node for OnePS {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.data = dataset
             .events
             .read()
@@ -142,48 +128,38 @@ impl Node for OnePS {
                 );
                 let pgamma = event.eps.norm();
                 let phase = Complex64::cis(-(pol_angle + big_phi));
-                let phase_part: Complex64 = match self.part {
-                    Part::Real => phase.re.into(),
-                    Part::Imag => phase.im.into(),
-                    Part::Both => phase,
-                };
                 match self.reflectivity {
-                    Reflectivity::Positive => (1.0 + pgamma).sqrt() * phase_part,
-                    Reflectivity::Negative => (1.0 - pgamma).sqrt() * phase_part,
+                    Reflectivity::Positive => (1.0 + pgamma).sqrt() * phase,
+                    Reflectivity::Negative => (1.0 - pgamma).sqrt() * phase,
                 }
             })
-            .collect()
+            .collect();
+        Ok(())
     }
 
-    fn calculate(&self, _parameters: &[f64], event: &Event) -> Complex64 {
-        self.data[event.index]
-    }
-
-    fn parameters(&self) -> Option<Vec<String>> {
-        None
+    fn calculate(&self, _parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
+        Ok(self.data[event.index])
     }
 }
 
 pub struct TwoPS {
     wave: Wave,
     reflectivity: Reflectivity,
-    part: Part,
     frame: Frame,
     data: Vec<Complex64>,
 }
 impl TwoPS {
-    pub fn new(wave: Wave, reflectivity: Reflectivity, part: Part, frame: Frame) -> Self {
+    pub fn new(wave: Wave, reflectivity: Reflectivity, frame: Frame) -> Self {
         Self {
             wave,
             reflectivity,
-            part,
             frame,
             data: Vec::default(),
         }
     }
 }
 impl Node for TwoPS {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.data = dataset
             .events
             .read()
@@ -210,29 +186,20 @@ impl Node for TwoPS {
                 };
                 let wigner_d_lm0_m =
                     f64::sqrt(4.0 * PI / (2.0 * self.wave.l() as f64 + 1.0)) * ylm_m;
-                let amp = big_theta * ylm_p - m_refl * wigner_d_lm0_m;
-                let amp_part: Complex64 = match self.part {
-                    Part::Real => amp.re.into(),
-                    Part::Imag => amp.im.into(),
-                    Part::Both => amp,
-                };
-                amp_part
+                big_theta * ylm_p - m_refl * wigner_d_lm0_m
             })
-            .collect()
+            .collect();
+        Ok(())
     }
 
-    fn calculate(&self, _parameters: &[f64], event: &Event) -> Complex64 {
-        self.data[event.index]
-    }
-
-    fn parameters(&self) -> Option<Vec<String>> {
-        None
+    fn calculate(&self, _parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
+        Ok(self.data[event.index])
     }
 }
 
 #[pyfunction]
 #[pyo3(name = "Ylm", signature = (name, l, m, frame="helicity"))]
-fn ylm(name: &str, l: usize, m: isize, frame: &str) -> Amplitude {
+fn ylm(name: &str, l: usize, m: isize, frame: &str) -> PyAmpOp {
     Amplitude::new(
         name,
         Box::new(Ylm::new(
@@ -240,54 +207,48 @@ fn ylm(name: &str, l: usize, m: isize, frame: &str) -> Amplitude {
             <Frame as std::str::FromStr>::from_str(frame).unwrap(),
         )),
     )
+    .into()
 }
 
 #[pyfunction]
-#[pyo3(name = "Zlm", signature = (name, l, m, reflectivity="positive", part="real", frame="helicity"))]
-fn zlm(name: &str, l: usize, m: isize, reflectivity: &str, part: &str, frame: &str) -> Amplitude {
+#[pyo3(name = "Zlm", signature = (name, l, m, reflectivity="positive", frame="helicity"))]
+fn zlm(name: &str, l: usize, m: isize, reflectivity: &str, frame: &str) -> PyAmpOp {
     Amplitude::new(
         name,
         Box::new(Zlm::new(
             Wave::new(l, m),
             <Reflectivity as std::str::FromStr>::from_str(reflectivity).unwrap(),
-            <Part as std::str::FromStr>::from_str(part).unwrap(),
             <Frame as std::str::FromStr>::from_str(frame).unwrap(),
         )),
     )
+    .into()
 }
 
 #[pyfunction]
-#[pyo3(name = "OnePS", signature = (name, reflectivity="positive", part="real", frame="helicity"))]
-fn one_ps(name: &str, reflectivity: &str, part: &str, frame: &str) -> Amplitude {
+#[pyo3(name = "OnePS", signature = (name, reflectivity="positive", frame="helicity"))]
+fn one_ps(name: &str, reflectivity: &str, frame: &str) -> PyAmpOp {
     Amplitude::new(
         name,
         Box::new(OnePS::new(
             <Reflectivity as std::str::FromStr>::from_str(reflectivity).unwrap(),
-            <Part as std::str::FromStr>::from_str(part).unwrap(),
             <Frame as std::str::FromStr>::from_str(frame).unwrap(),
         )),
     )
+    .into()
 }
 
 #[pyfunction]
-#[pyo3(name = "TwoPS", signature = (name, l, m, reflectivity="positive", part="real", frame="helicity"))]
-fn two_ps(
-    name: &str,
-    l: usize,
-    m: isize,
-    reflectivity: &str,
-    part: &str,
-    frame: &str,
-) -> Amplitude {
+#[pyo3(name = "TwoPS", signature = (name, l, m, reflectivity="positive", frame="helicity"))]
+fn two_ps(name: &str, l: usize, m: isize, reflectivity: &str, frame: &str) -> PyAmpOp {
     Amplitude::new(
         name,
         Box::new(TwoPS::new(
             Wave::new(l, m),
             <Reflectivity as std::str::FromStr>::from_str(reflectivity).unwrap(),
-            <Part as std::str::FromStr>::from_str(part).unwrap(),
             <Frame as std::str::FromStr>::from_str(frame).unwrap(),
         )),
     )
+    .into()
 }
 
 pub fn pyo3_module(m: &Bound<'_, PyModule>) -> PyResult<()> {

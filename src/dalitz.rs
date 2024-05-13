@@ -10,7 +10,7 @@ pub struct OmegaDalitz {
 }
 
 impl Node for OmegaDalitz {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         (self.dalitz_z, (self.dalitz_sin3theta, self.lambda)) = dataset
             .events
             .read()
@@ -44,9 +44,10 @@ impl Node for OmegaDalitz {
                 (dalitz_z, (dalitz_sin3theta, lambda))
             })
             .unzip();
+        Ok(())
     }
 
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let dalitz_z = self.dalitz_z[event.index];
         let dalitz_sin3theta = self.dalitz_sin3theta[event.index];
         let lambda = self.lambda[event.index];
@@ -54,7 +55,7 @@ impl Node for OmegaDalitz {
         let beta = parameters[1];
         let gamma = parameters[2];
         let delta = parameters[3];
-        f64::sqrt(f64::abs(
+        Ok(f64::sqrt(f64::abs(
             lambda
                 * (1.0
                     + 2.0 * alpha * dalitz_z
@@ -62,22 +63,22 @@ impl Node for OmegaDalitz {
                     + 2.0 * gamma * dalitz_z.powi(2)
                     + 2.0 * delta * dalitz_z.powf(5.0 / 2.0) * dalitz_sin3theta),
         ))
-        .into()
+        .into())
     }
 
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec![
+    fn parameters(&self) -> Vec<String> {
+        vec![
             "alpha".to_string(),
             "beta".to_string(),
             "gamma".to_string(),
             "delta".to_string(),
-        ])
+        ]
     }
 }
 
 #[pyfunction(name = "OmegaDalitz")]
-fn omega_dalitz(name: &str) -> Amplitude {
-    Amplitude::new(name, Box::<OmegaDalitz>::default())
+fn omega_dalitz(name: &str) -> PyAmpOp {
+    Amplitude::new(name, Box::<OmegaDalitz>::default()).into()
 }
 
 pub fn pyo3_module(m: &Bound<'_, PyModule>) -> PyResult<()> {

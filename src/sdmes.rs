@@ -21,7 +21,7 @@ impl TwoPiSDME {
 }
 
 impl Node for TwoPiSDME {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.data = dataset
             .events
             .read()
@@ -48,9 +48,10 @@ impl Node for TwoPiSDME {
                 )
             })
             .collect();
+        Ok(())
     }
 
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let (costheta, sinsqtheta, sin2theta, phi, big_phi, pgamma) = self.data[event.index];
         let pol_angle = event.eps[0].acos();
         let r_big_phi = pol_angle * 0.017453293 + big_phi;
@@ -64,7 +65,7 @@ impl Node for TwoPiSDME {
         let rho_102 = parameters[7];
         let rho_1n12 = parameters[8];
 
-        f64::sqrt(f64::abs(
+        Ok(f64::sqrt(f64::abs(
             (3.0 / (4.0 * PI))
                 * (0.5 * (1.0 - rho_000) + 0.5 * (3.0 * rho_000 - 1.0) * costheta * costheta
                     - f64::sqrt(2.0) * rho_100 * sin2theta * f64::cos(phi)
@@ -79,11 +80,11 @@ impl Node for TwoPiSDME {
                     * (f64::sqrt(2.0) * rho_102 * sin2theta * f64::sin(phi)
                         + rho_1n12 * sinsqtheta * f64::sin(2.0 * phi)),
         ))
-        .into()
+        .into())
     }
 
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec![
+    fn parameters(&self) -> Vec<String> {
+        vec![
             "rho_000".to_string(),
             "rho_100".to_string(),
             "rho_1n10".to_string(),
@@ -93,7 +94,7 @@ impl Node for TwoPiSDME {
             "rho_1n11".to_string(),
             "rho_102".to_string(),
             "rho_1n12".to_string(),
-        ])
+        ]
     }
 }
 
@@ -112,7 +113,7 @@ impl ThreePiSDME {
 }
 
 impl Node for ThreePiSDME {
-    fn precalculate(&mut self, dataset: &Dataset) {
+    fn precalculate(&mut self, dataset: &Dataset) -> Result<(), NodeError> {
         self.data = dataset
             .events
             .read()
@@ -142,9 +143,10 @@ impl Node for ThreePiSDME {
                 )
             })
             .collect();
+        Ok(())
     }
 
-    fn calculate(&self, parameters: &[f64], event: &Event) -> Complex64 {
+    fn calculate(&self, parameters: &[f64], event: &Event) -> Result<Complex64, NodeError> {
         let (costheta, sinsqtheta, sin2theta, phi, big_phi, pgamma) = self.data[event.index];
         let pol_angle = event.eps[0].acos();
         let r_big_phi = pol_angle * 0.017453293 + big_phi;
@@ -158,7 +160,7 @@ impl Node for ThreePiSDME {
         let rho_102 = parameters[7];
         let rho_1n12 = parameters[8];
 
-        f64::sqrt(f64::abs(
+        Ok(f64::sqrt(f64::abs(
             (3.0 / (4.0 * PI))
                 * (0.5 * (1.0 - rho_000) + 0.5 * (3.0 * rho_000 - 1.0) * costheta * costheta
                     - f64::sqrt(2.0) * rho_100 * sin2theta * f64::cos(phi)
@@ -173,11 +175,11 @@ impl Node for ThreePiSDME {
                     * (f64::sqrt(2.0) * rho_102 * sin2theta * f64::sin(phi)
                         + rho_1n12 * sinsqtheta * f64::sin(2.0 * phi)),
         ))
-        .into()
+        .into())
     }
 
-    fn parameters(&self) -> Option<Vec<String>> {
-        Some(vec![
+    fn parameters(&self) -> Vec<String> {
+        vec![
             "rho_000".to_string(),
             "rho_100".to_string(),
             "rho_1n10".to_string(),
@@ -187,29 +189,31 @@ impl Node for ThreePiSDME {
             "rho_1n11".to_string(),
             "rho_102".to_string(),
             "rho_1n12".to_string(),
-        ])
+        ]
     }
 }
 
 #[pyfunction]
 #[pyo3(name = "TwoPiSDME", signature = (name, frame="helicity"))]
-fn two_pi_sdme(name: &str, frame: &str) -> Amplitude {
+fn two_pi_sdme(name: &str, frame: &str) -> PyAmpOp {
     Amplitude::new(
         name,
         Box::new(TwoPiSDME::new(
             <Frame as std::str::FromStr>::from_str(frame).unwrap(),
         )),
     )
+    .into()
 }
 #[pyfunction]
 #[pyo3(name = "ThreePiSDME", signature = (name, frame="helicity"))]
-fn three_pi_sdme(name: &str, frame: &str) -> Amplitude {
+fn three_pi_sdme(name: &str, frame: &str) -> PyAmpOp {
     Amplitude::new(
         name,
         Box::new(ThreePiSDME::new(
             <Frame as std::str::FromStr>::from_str(frame).unwrap(),
         )),
     )
+    .into()
 }
 
 pub fn pyo3_module(m: &Bound<'_, PyModule>) -> PyResult<()> {

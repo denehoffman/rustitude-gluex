@@ -67,32 +67,6 @@ pub fn wigner_d_matrix(
         * Complex64::cis(-(n as f64) * gamma)
 }
 
-#[derive(Clone, Copy, Debug)]
-pub enum Part {
-    Real,
-    Imag,
-    Both,
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub struct ParsePartError;
-
-impl FromStr for Part {
-    type Err = ParsePartError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_ref() {
-            "real" => Ok(Part::Real),
-            "re" => Ok(Part::Real),
-            "imaginary" => Ok(Part::Imag),
-            "imag" => Ok(Part::Imag),
-            "im" => Ok(Part::Imag),
-            "both" => Ok(Part::Both),
-            _ => Err(ParsePartError),
-        }
-    }
-}
-
 #[derive(Clone, Copy, Default)]
 #[rustfmt::skip]
 pub enum Wave {
